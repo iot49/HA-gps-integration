@@ -15,9 +15,9 @@ import voluptuous as vol
 from homeassistant.components.sensor import PLATFORM_SCHEMA, SensorEntity
 from homeassistant.const import CONF_NAME, CONF_VALUE_TEMPLATE, EVENT_HOMEASSISTANT_STOP
 from homeassistant.const import ATTR_LATITUDE, ATTR_LONGITUDE, CONF_ELEVATION
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import callback
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
+from homeassistant.helpers.typing import HomeAssistantType, ConfigType, DiscoveryInfoType
 import homeassistant.helpers.config_validation as cv
 
 _LOGGER = logging.getLogger(__name__)
@@ -59,14 +59,20 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 async def async_setup_platform(
     hass: HomeAssistantType,
     config: ConfigType,
-    async_add_entities: Callable,
-    discovery_info: Optional[DiscoveryInfoType] = None,
+    async_add_entities: AddEntitiesCallback,
+    discovery_info: DiscoveryInfoType | None = None,
 ) -> None:
-    """Set up the sensor platform."""
-    session = async_get_clientsession(hass)
-    github = GitHubAPI(session, "requester", oauth_token=config[CONF_ACCESS_TOKEN])
-    sensors = [GitHubRepoSensor(github, repo) for repo in config[CONF_REPOS]]
-    async_add_entities(sensors, update_before_add=True)
+    """Set up the GPS sensor platform."""
+    name = config.get(CONF_NAME)
+    port = config.get(CONF_SERIAL_PORT)
+    baudrate = config.get(CONF_BAUDRATE)
+    tol = config.get(CONF_TOL)
+    quality = config.get(CONF_QUALITY)
+
+    sensor = GPSSensor(name, port, baudrate, tol, quality)
+
+    hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STOP, sensor.stop_gps_read)
+    async_add_entities([sensor], True)
 
 
 class GPSSensor(SensorEntity):
