@@ -114,9 +114,10 @@ class GPSSensor(SensorEntity):
                         break
                     else:
                         line = line.decode("utf-8").strip()
-                        _LOGGER.debug("Received: %s", line)
+                        _LOGGER.debug("Received: {line}")
                         try:
                             msg = pynmea2.parse(line)
+                            _LOGGER.debug("Parsed: {msg}")
                             if msg.gps_qual < self._quality:
                                 skip_count += 1
                                 if skip_count % 120 == 0:
@@ -125,7 +126,7 @@ class GPSSensor(SensorEntity):
                             if abs(msg.latitude - last_latitude) < self._tol and abs(msg.longitude - last_longitude) < self._tol:
                                 # ignore small changes
                                 continue
-                            self._state = "gps_time"
+                            self._state = "gps_time"  # msg.timestamp
                             self._attributes[ATTR_LATITUDE] = msg.latitude
                             self._attributes[ATTR_LONGITUDE] = msg.longitude
                             self._attributes[CONF_ELEVATION] = msg.altitude
@@ -136,8 +137,8 @@ class GPSSensor(SensorEntity):
                             # notify HA of new state
                             self.async_write_ha_state()
 
-                        except (AttributeError, pynmea2.ParseError):
-                            continue
+                        except (AttributeError, pynmea2.ParseError) as e:
+                            _LOGGER.debug("Parsed: {e}")
 
 
     @callback
