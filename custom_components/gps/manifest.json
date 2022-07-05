@@ -1,0 +1,11 @@
+{
+  "version": "0.0.0",
+  "name": "GPS",
+  "domain": "gps",
+  "requirements": ["pyserial_asyncio", "pynmea2"],
+  "dependencies": [],
+  "config_flow": false,
+  "iot_class": "local_polling",
+  "codeowners": ["@iot49"],
+  "documentation": "https://github.com/iot49/HA-GPS-integration.git"
+}

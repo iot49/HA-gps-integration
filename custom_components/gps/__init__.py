@@ -1,0 +1,1 @@
+"""The GPS component."""
