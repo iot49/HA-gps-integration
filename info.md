@@ -2,6 +2,12 @@
 
 The `gps` sensor platform reads location and altitude data from an [NMEA](https://en.wikipedia.org/wiki/NMEA_0183) gps attached to a USB port. Uses the Python [pynmea2](https://github.com/Knio/pynmea2) library.
 
+## Install
+
+The easiest way to install the BLE Monitor integration is with HACS. First install HACS if you don’t have it yet. In HACS, click on the three dots in the upper right corner and choose `Custom Repositories`. The repository is `https://github.com/iot49/HA-gps-integration.git`. Instruct HACS to download the integration, restart Home Assistant, and update your configuration per the instructions below. You will need to restart Home Assistant again to start the integration.
+
+Alternatively, you can install it manually. Just copy paste the content of the `custom_components` folder in your `config/custom_components` directory. As example, you will get the `sensor.py` file in the following path: `config/custom_components/gps/sensor.py`. The disadvantage of a manual installation is that you won’t be notified about updates.
+
 ## Configuration
 
 To set up the gps, add the following to your `configuration.yaml` file:
