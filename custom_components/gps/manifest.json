@@ -1,11 +1,10 @@
 {
-  "version": "0.0.1",
-  "name": "GPS",
   "domain": "gps",
-  "requirements": ["pyserial_asyncio", "pynmea2"],
-  "dependencies": [],
-  "config_flow": false,
+  "documentation": "https://github.com/iot49/HA-gps-integration.git",
+  "issue_tracker": "https://github.com/iot49/HA-sps-integration.git/issues",
+  "requirements": ["pynmea2", "pyserial_asyncio"],
   "iot_class": "local_polling",
-  "codeowners": ["@iot49"],
-  "documentation": "https://github.com/iot49/HA-GPS-integration.git"
+  "name": "GPS",
+  "codeowners": [ "@ttmetro" ],
+  "version": "0.1.0"
 }
