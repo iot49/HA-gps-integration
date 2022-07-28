@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import pynmea2
+import time
 
 from serial.tools import list_ports
 from serial import SerialException
@@ -131,15 +133,17 @@ class GPSSensor(GenericSensor):
                                 'signal_quality': msg.gps_qual,
                                 'timestamp': time.ctime(),
                             }
+                            # report changed state to HA
+                            _LOGGER.debug("update states in HA")
+                            for s in sensors.values():
+                                _LOGGER.debug(f"state[{s.name}] = {s.native_value} {s.native_unit_of_measurement}")
+                                s.async_write_ha_state()
                             last_latitude = msg.latitude
                             last_longitude = msg.longitude
                         except (AttributeError, pynmea2.ParseError) as e:
                             _LOGGER.debug(f"***** Exception: {type(e)} {e}")
-                        # report changed state to HA
-                        _LOGGER.debug("update states in HA")
-                        for s in sensors.values():
-                            _LOGGER.debug(f"state[{s.name}] = {s.native_value} {s.native_unit_of_measurement}")
-                            s.async_write_ha_state()
+                        except Exception as e:
+                            _LOGGER.exception(f"***** Unexpected error: {e}")
 
     async def _handle_error(self):
         """Handle error for serial connection."""
